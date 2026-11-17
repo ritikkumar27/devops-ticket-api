@@ -10,6 +10,7 @@ on:
 permissions:
   contents: read
   packages: write
+  security-events: write
 
 jobs:
   # ============================================================================
@@ -45,6 +46,25 @@ jobs:
 
       - name: Run Jest Unit Tests
         run: pnpm test
+
+
+  # ============================================================================
+  # STAGE 2: DevSecOps Secret & Vulnerability Scanning (Question 3)
+  # ============================================================================
+  security-scan:
+    name: DevSecOps Vulnerability & Secret Scan
+    runs-on: ubuntu-latest
+    needs: test-and-validate
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Scan Repository for Leaked Secrets (Gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # ============================================================================
   # STAGE 2: Build Application & Package Docker Container
