@@ -10,6 +10,7 @@ on:
 permissions:
   contents: read
   packages: write
+  security-events: write
 
 jobs:
   # ============================================================================
@@ -45,6 +46,27 @@ jobs:
 
       - name: Run Jest Unit Tests
         run: pnpm test
+
+
+  # ============================================================================
+  # STAGE 2: DevSecOps Secret & Vulnerability Scanning (Question 3)
+  # ============================================================================
+  security-scan:
+    name: DevSecOps Vulnerability & Secret Scan
+    runs-on: ubuntu-latest
+    needs: test-and-validate
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Scan Repository for Leaked Secrets (Gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      
 
   # ============================================================================
   # STAGE 2: Build Application & Package Docker Container
@@ -90,6 +112,14 @@ jobs:
             ${{ steps.image_info.outputs.image_uri }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Scan Container Image for Vulnerabilities (Trivy)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ steps.image_info.outputs.image_uri }}:${{ steps.image_info.outputs.image_tag }}
+          scan-type: 'image'
+          severity: 'CRITICAL'
+          exit-code: '0'
 
   # ============================================================================
   # STAGE 3: Automated Deployment to AWS EC2
