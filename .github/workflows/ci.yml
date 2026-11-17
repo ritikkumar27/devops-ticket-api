@@ -97,7 +97,7 @@ jobs:
   deploy-to-aws-ec2:
     name: Deploy to AWS EC2 & Verify Health
     runs-on: ubuntu-latest
-    needs: build-and-push
+    needs: build-and-package
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Deploy Container to AWS EC2 via SSH
