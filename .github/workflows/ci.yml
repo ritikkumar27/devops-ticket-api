@@ -66,6 +66,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      
+
   # ============================================================================
   # STAGE 2: Build Application & Package Docker Container
   # ============================================================================
@@ -110,6 +112,14 @@ jobs:
             ${{ steps.image_info.outputs.image_uri }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Scan Container Image for Vulnerabilities (Trivy)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ steps.image_info.outputs.image_uri }}:${{ steps.image_info.outputs.image_tag }}
+          scan-type: 'image'
+          severity: 'CRITICAL'
+          exit-code: '0'
 
   # ============================================================================
   # STAGE 3: Automated Deployment to AWS EC2
