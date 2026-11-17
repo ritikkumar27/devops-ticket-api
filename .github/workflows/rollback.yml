@@ -1,0 +1,49 @@
+name: On-Demand Rollback to AWS EC2
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_image_tag:
+        description: 'Target Commit SHA or Tag to restore (e.g. latest or a commit SHA)'
+        required: true
+        default: 'latest'
+      reason:
+        description: 'Reason for rollback'
+        required: true
+        default: 'Production Incident Recovery'
+
+jobs:
+  rollback:
+    name: Execute Rollback on AWS EC2
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute Rollback via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            echo "=========================================================="
+            echo "🚨 INITIATING ON-DEMAND ROLLBACK"
+            echo "Target Tag: ${{ github.event.inputs.target_image_tag }}"
+            echo "Reason:     ${{ github.event.inputs.reason }}"
+            echo "=========================================================="
+
+            REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+            TARGET_IMAGE="ghcr.io/${REPO_LOWER}:${{ github.event.inputs.target_image_tag }}"
+
+            echo "Pulling target image: $TARGET_IMAGE"
+            docker pull "$TARGET_IMAGE"
+
+            docker stop devops-ticket-api || true
+            docker rm devops-ticket-api || true
+
+            docker run -d \
+              --name devops-ticket-api \
+              --restart unless-stopped \
+              -p 3000:3000 \
+              -e NODE_ENV=production \
+              "$TARGET_IMAGE"
+
+            echo "✅ Container restored to $TARGET_IMAGE"
