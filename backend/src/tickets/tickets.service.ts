@@ -90,11 +90,9 @@ export class TicketsService {
 
   update(id: string, updateTicketDto: UpdateTicketDto): Ticket {
     const existing = this.findOne(id);
-    const updated: Ticket = {
-      ...existing,
-      ...updateTicketDto,
+    const updated: Ticket = Object.assign(new Ticket(), existing, updateTicketDto, {
       updatedAt: new Date(),
-    };
+    });
 
     this.tickets.set(id, updated);
     return updated;

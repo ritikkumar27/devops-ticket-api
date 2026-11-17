@@ -6,7 +6,7 @@ import { TicketsService } from './tickets.service';
 
 describe('TicketsController', () => {
   let controller: TicketsController;
-  let service: TicketsService;
+  let _service: TicketsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -15,7 +15,7 @@ describe('TicketsController', () => {
     }).compile();
 
     controller = module.get<TicketsController>(TicketsController);
-    service = module.get<TicketsService>(TicketsService);
+    _service = module.get<TicketsService>(TicketsService);
   });
 
   it('should be defined', () => {
