@@ -1,8 +1,8 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { CreateTicketDto } from './dto/create-ticket.dto';
-import { TicketPriority, TicketStatus } from './entities/ticket.entity';
-import { TicketsService } from './tickets.service';
+import { CreateTicketDto } from './dto/create-ticket.dto.js';
+import { TicketPriority, TicketStatus } from './entities/ticket.entity.js';
+import { TicketsService } from './tickets.service.js';
 
 describe('TicketsService', () => {
   let service: TicketsService;

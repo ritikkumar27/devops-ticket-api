@@ -17,10 +17,10 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { CreateTicketDto } from './dto/create-ticket.dto';
-import { UpdateTicketDto } from './dto/update-ticket.dto';
-import { Ticket, TicketPriority, TicketStatus } from './entities/ticket.entity';
-import { TicketsService } from './tickets.service';
+import { CreateTicketDto } from './dto/create-ticket.dto.js';
+import { UpdateTicketDto } from './dto/update-ticket.dto.js';
+import { Ticket, TicketPriority, TicketStatus } from './entities/ticket.entity.js';
+import { TicketsService } from './tickets.service.js';
 
 @ApiTags('Tickets')
 @Controller('tickets')

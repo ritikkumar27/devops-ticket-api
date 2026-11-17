@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
-import { TicketPriority, TicketStatus } from '../entities/ticket.entity';
+import { TicketPriority, TicketStatus } from '../entities/ticket.entity.js';
 
 export class CreateTicketDto {
   @ApiProperty({

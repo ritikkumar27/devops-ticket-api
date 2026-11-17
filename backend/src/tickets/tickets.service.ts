@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { CreateTicketDto } from './dto/create-ticket.dto';
-import { UpdateTicketDto } from './dto/update-ticket.dto';
-import { Ticket, TicketPriority, TicketStatus } from './entities/ticket.entity';
+import { CreateTicketDto } from './dto/create-ticket.dto.js';
+import { UpdateTicketDto } from './dto/update-ticket.dto.js';
+import { Ticket, TicketPriority, TicketStatus } from './entities/ticket.entity.js';
 
 @Injectable()
 export class TicketsService {

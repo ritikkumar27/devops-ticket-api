@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CreateTicketDto } from './dto/create-ticket.dto';
-import { TicketPriority, TicketStatus } from './entities/ticket.entity';
-import { TicketsController } from './tickets.controller';
-import { TicketsService } from './tickets.service';
+import { CreateTicketDto } from './dto/create-ticket.dto.js';
+import { TicketPriority, TicketStatus } from './entities/ticket.entity.js';
+import { TicketsController } from './tickets.controller.js';
+import { TicketsService } from './tickets.service.js';
 
 describe('TicketsController', () => {
   let controller: TicketsController;

@@ -1,4 +1,4 @@
-import { VersionController } from './version.controller';
+import { VersionController } from './version.controller.js';
 
 describe('VersionController', () => {
   let controller: VersionController;
