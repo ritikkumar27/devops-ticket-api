@@ -140,6 +140,16 @@ jobs:
               -e COMMIT_SHA=${{ needs.build-and-package.outputs.image_tag }} \
               ${{ needs.build-and-package.outputs.image_uri }}:${{ needs.build-and-package.outputs.image_tag }}
             echo "✅ Container started successfully on port 3000"
+            sleep 3
+            echo "=========================================================="
+            echo "🔍 EC2 Live Diagnostics:"
+            echo "--- Docker Containers ---"
+            docker ps -a
+            echo "--- Container Logs ---"
+            docker logs --tail 30 devops-ticket-api
+            echo "--- Local Curl Test on EC2 ---"
+            curl -sS http://127.0.0.1:3000/health || echo "Local curl on EC2 failed"
+            echo "=========================================================="
 
       # Automated failure detection (Question 2)
       - name: Verify Post-Deployment Health & Version
