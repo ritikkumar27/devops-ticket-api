@@ -17,35 +17,6 @@ This project implements a CI/CD pipeline and microservice architecture for a **T
 
 ---
 
-## 🏛️ End-to-End System Architecture
-
-```mermaid
-flowchart TD
-    subgraph Developer Workflow
-        Dev[Engineer] -->|git push / PR| GH[GitHub Repository: main / dev]
-    end
-
-    subgraph CI Pipeline - GitHub Actions
-        GH --> Stage1["Stage 1: Lint (oxlint) & Jest Unit Tests (22 passing)"]
-        Stage1 --> Stage2["Stage 2: DevSecOps Scans (Gitleaks + Trivy fs)"]
-        Stage2 --> Stage3["Stage 3: Docker Buildx + Trivy Image Scan"]
-        Stage3 --> PushGHCR["Push Image to GitHub Container Registry (GHCR)"]
-    end
-
-    subgraph CD Pipeline - Automated Deployment & Recovery
-        PushGHCR --> SSHDeploy["Stage 4: SSH Deployment to AWS EC2 (ssh-action)"]
-        SSHDeploy --> PullEC2["EC2: docker login & docker pull ghcr.io/..."]
-        PullEC2 --> StateTracking["EC2: Record Previous Version in ~/.deploy_state.json"]
-        StateTracking --> RestartContainer["EC2: Zero-Downtime Container Restart on Port 3000"]
-        RestartContainer --> HealthProbe{"GitHub Runner: Probe http://<EC2-IP>:3000/health"}
-        HealthProbe -->|HTTP 200 OK| DeploySuccess["🎉 Deployment Verified & Live"]
-        HealthProbe -->|Timeout / Error| AutoRollback["🚨 Automatic Rollback Trigger"]
-        AutoRollback --> RestoreStable["EC2: Re-run Previous Stable Image Tag"]
-    end
-```
-
----
-
 ## 📁 Repository Structure
 
 ```
@@ -183,3 +154,33 @@ In accordance with Section 3, Item 7 of the assignment requirements:
 * **AI Tool Utilized:** Antigravity Coding Assistant
 * **Usage:** Assisted in designing CI/CD workflow configurations (GitHub Actions YAML syntax), troubleshooting Node.js ESM specifier resolution, and formatting architectural documentation.
 * **Verification:** All generated configurations, code changes, and test suites were reviewed, executed, debugged, and verified manually in both local development environments and on live AWS EC2 cloud infrastructure.
+
+
+## 🏛️ End-to-End System Architecture
+
+```mermaid
+flowchart TD
+    subgraph Developer Workflow
+        Dev[Engineer] -->|git push / PR| GH[GitHub Repository: main / dev]
+    end
+
+    subgraph CI Pipeline - GitHub Actions
+        GH --> Stage1["Stage 1: Lint (oxlint) & Jest Unit Tests (22 passing)"]
+        Stage1 --> Stage2["Stage 2: DevSecOps Scans (Gitleaks + Trivy fs)"]
+        Stage2 --> Stage3["Stage 3: Docker Buildx + Trivy Image Scan"]
+        Stage3 --> PushGHCR["Push Image to GitHub Container Registry (GHCR)"]
+    end
+
+    subgraph CD Pipeline - Automated Deployment & Recovery
+        PushGHCR --> SSHDeploy["Stage 4: SSH Deployment to AWS EC2 (ssh-action)"]
+        SSHDeploy --> PullEC2["EC2: docker login & docker pull ghcr.io/..."]
+        PullEC2 --> StateTracking["EC2: Record Previous Version in ~/.deploy_state.json"]
+        StateTracking --> RestartContainer["EC2: Zero-Downtime Container Restart on Port 3000"]
+        RestartContainer --> HealthProbe{"GitHub Runner: Probe http://<EC2-IP>:3000/health"}
+        HealthProbe -->|HTTP 200 OK| DeploySuccess["🎉 Deployment Verified & Live"]
+        HealthProbe -->|Timeout / Error| AutoRollback["🚨 Automatic Rollback Trigger"]
+        AutoRollback --> RestoreStable["EC2: Re-run Previous Stable Image Tag"]
+    end
+```
+
+---
